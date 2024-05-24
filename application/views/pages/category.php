@@ -30,28 +30,26 @@
               </ul>
             </div>
           </div><!--/brands_products-->
-
-          <div class="price-range"><!--price-range-->
-            <h2>Price Range</h2>
-            <div class="well text-center">
-              <input type="text" class="span2" value="" data-slider-min="0" data-slider-max="600" data-slider-step="5"
-                data-slider-value="[250,450]" id="sl2"><br />
-              <b class="pull-left">$ 0</b> <b class="pull-right">$ 600</b>
-            </div>
-          </div><!--/price-range-->
-
-          <div class="shipping text-center"><!--shipping-->
-            <img src="images/home/shipping.jpg" alt="" />
-          </div><!--/shipping-->
-
         </div>
       </div>
 
       <div class="col-sm-9 padding-right">
         <div class="features_items"><!--features_items-->
+          <!-- <div class="col-mb-3">
+            <div class="form-group">
+              <label for="">Filter</label>
+              <select id="select-filter" class="form-control select-filter">
+                <option value="0">Filter by</option>
+                <option value="?kytu=asc">Characters from A-Z</option>
+                <option value="?kytu=desc">Characters from Z-A</option>
+                <option value="?gia=asc">Price (low to high)</option>
+                <option value="?gia=desc">Price (high to low)</option>
+              </select>
+            </div>
+          </div> -->
           <h2 class="title text-center"><?php echo $title ?></h2>
           <?php
-          foreach ($category_product as $key => $pro) {
+          foreach ($allproductbycate_pagination as $key => $pro) {
             ?>
             <div class="col-sm-4">
               <div class="product-image-wrapper">
@@ -60,30 +58,27 @@
                     <div class="productinfo text-center">
                       <input type="hidden" value="<?php echo $pro->id ?>" name="product_id">
                       <input type="hidden" value="1" name="quantity">
-                      <img src="<?php echo base_url('uploads/product/' . $pro->image) ?>"
-                        alt="<?php echo $pro->title ?>" />
+                      <div
+                        style="width: 200px;height: 200px;object-fit: cover;margin: 0px 0px 20px 27px;padding-top: 15px;">
+                        <img src="<?php echo base_url('uploads/product/' . $pro->image) ?>"
+                          alt="<?php echo $pro->title ?>" />
+                      </div>
                       <h2><?php echo number_format($pro->price, 0, ',', '.') ?>VND</h2>
                       <p><?php echo $pro->title ?></p>
                       <a href="<?php echo base_url('san-pham/' . $pro->id) ?>" class="btn btn-default add-to-cart"><i
                           class="fa fa-eye"></i>Details</a>
-                      <button type="submit" class="btn btn-default cart">
+                      <button type="submit" class="btn btn-default add-to-cart">
                         <i class="fa fa-shopping-cart"></i>
                         Add to cart
                       </button>
                     </div>
-                  </div>
-                  <div class="choose">
-                    <!-- <ul class="nav nav-pills nav-justified">
-                    <li><a href="#"><i class="fa fa-plus-square"></i>Add to wishlist</a></li>
-                    <li><a href="#"><i class="fa fa-plus-square"></i>Add to compare</a></li>
-                  </ul> -->
                   </div>
                 </form>
               </div>
             </div>
           <?php } ?>
         </div><!--features_items-->
-
+        <?php echo $links; ?>
       </div>
     </div>
   </div>

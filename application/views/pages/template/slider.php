@@ -11,46 +11,20 @@
 
           <div class="carousel-inner">
             <div class="item active">
-              <div class="col-sm-6">
-                <h1><span>E</span>-SHOPPER</h1>
-                <h2>Free E-Commerce Template</h2>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut
-                  labore et dolore magna aliqua. </p>
-                <button type="button" class="btn btn-default get">Get it now</button>
-              </div>
-              <div class="col-sm-6">
-                <img src="images/home/girl1.jpg" class="girl img-responsive" alt="" />
-                <img src="images/home/pricing.png" class="pricing" alt="" />
+              <div class="text-center" style="margin-left:130px">
+                <img src="images/home/img_(1).webp" class="girl img-responsive" alt="" />
               </div>
             </div>
             <div class="item">
-              <div class="col-sm-6">
-                <h1><span>E</span>-SHOPPER</h1>
-                <h2>100% Responsive Design</h2>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut
-                  labore et dolore magna aliqua. </p>
-                <button type="button" class="btn btn-default get">Get it now</button>
-              </div>
-              <div class="col-sm-6">
-                <img src="images/home/girl2.jpg" class="girl img-responsive" alt="" />
-                <img src="images/home/pricing.png" class="pricing" alt="" />
+              <div class="text-center" style="margin-left:130px">
+                <img src="images/home/img_(2).webp" class="girl img-responsive" alt="" />
               </div>
             </div>
-
             <div class="item">
-              <div class="col-sm-6">
-                <h1><span>E</span>-SHOPPER</h1>
-                <h2>Free Ecommerce Template</h2>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut
-                  labore et dolore magna aliqua. </p>
-                <button type="button" class="btn btn-default get">Get it now</button>
-              </div>
-              <div class="col-sm-6">
-                <img src="images/home/girl3.jpg" class="girl img-responsive" alt="" />
-                <img src="images/home/pricing.png" class="pricing" alt="" />
+              <div class="text-center" style="margin-left:130px">
+                <img src="images/home/img_(3).webp" class="girl img-responsive" alt="" />
               </div>
             </div>
-
           </div>
 
           <a href="#slider-carousel" class="left control-carousel hidden-xs" data-slide="prev">

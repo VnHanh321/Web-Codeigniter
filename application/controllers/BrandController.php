@@ -67,7 +67,7 @@ class BrandController extends CI_Controller
 
         $this->load->model('BrandModel');
         $this->BrandModel->insertBrand($data);
-        $this->session->set_flashdata('success', 'Thêm thành công');
+        $this->session->set_flashdata('success', 'Add sucsess');
         redirect(base_url('brand/list'));
       }
     } else {

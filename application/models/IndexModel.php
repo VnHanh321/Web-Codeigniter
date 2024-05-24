@@ -82,12 +82,40 @@ class IndexModel extends CI_Model
   }
   public function getProductByKeyword($keyword)
   {
+    $query = $this->db->select('categories.title as tendanhmuc,products.*, brands.title as tenthuonghieu')
+      ->from('categories')
+      ->join('products', 'products.category_id=categories.id')
+      ->join('brands', 'brands.id=products.brand_id')
+      ->like('products.title', $keyword)
+      ->get();
+    return $query->result();
+  }
+  public function countAllProduct()
+  {
+    return $this->db->count_all('products');
+  }
+  public function countAllProductByCate($id)
+  {
+    $this->db->where('category_id', $id);
+    $this->db->from('products');
+    return $this->db->count_all_results();
+  }
+  public function getIndexPagination($limit, $start)
+  {
+    $this->db->limit($limit, $start);
+    $query = $this->db->get_where('products', ['status' => 1]);
+    return $query->result();
+  }
+  public function getCatePagination($id, $limit, $start)
+  {
+    $this->db->limit($limit, $start);
+    // $query = $this->db->get_where('products', ['status' => 1]);
     $query = $this->db
       ->select('categories.title as tendanhmuc,products.*,brands.title as tenthuonghieu')
       ->from('categories')
       ->join('products', 'products.category_id=categories.id')
       ->join('brands', 'brands.id=products.brand_id')
-      ->like('products.title', $keyword)
+      ->where('products.category_id', $id)
       ->get();
     return $query->result();
   }

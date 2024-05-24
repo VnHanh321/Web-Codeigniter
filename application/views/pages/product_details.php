@@ -36,20 +36,6 @@
               </ul>
             </div>
           </div><!--/brands_products-->
-
-          <div class="price-range"><!--price-range-->
-            <h2>Price Range</h2>
-            <div class="well text-center">
-              <input type="text" class="span2" value="" data-slider-min="0" data-slider-max="600" data-slider-step="5"
-                data-slider-value="[250,450]" id="sl2"><br />
-              <b class="pull-left">$ 0</b> <b class="pull-right">$ 600</b>
-            </div>
-          </div><!--/price-range-->
-
-          <div class="shipping text-center"><!--shipping-->
-            <img src="images/home/shipping.jpg" alt="" />
-          </div><!--/shipping-->
-
         </div>
       </div>
 
@@ -64,6 +50,13 @@
             </div>
             <form action="<?php echo base_url('add-to-cart') ?>" method="POST">
               <div class="col-sm-7">
+                <?php
+                if ($this->session->flashdata('success')) {
+                  echo '<div class="alert alert-success">' . $this->session->flashdata('success') . '</div>';
+                } elseif ($this->session->flashdata('error')) {
+                  echo '<div class="alert alert-danger">' . $this->session->flashdata('error') . '</div>';
+                }
+                ?>
                 <div class="product-information"><!--/product-information-->
                   <img src="images/product-details/new.jpg" class="newarrival" alt="" />
                   <h2><?php echo $pro->title ?></h2>
@@ -73,7 +66,7 @@
                     <span><?php echo number_format($pro->price, 0, ',', '.') ?> VND</span><br>
                     <label>Quantity: <?php echo $pro->quantity ?></label>
                     <input type="number" min="1" value="1" name="quantity" />
-                    <button type="submit" class="btn btn-default cart">
+                    <button type="submit" class="btn btn-default add-to-cart">
                       <i class="fa fa-shopping-cart"></i>
                       Add to cart
                     </button>
@@ -295,103 +288,47 @@
         </div><!--/category-tab-->
 
         <div class="recommended_items"><!--recommended_items-->
-          <h2 class="title text-center">recommended items</h2>
+          <h2 class="title text-center">Recommended items</h2>
 
           <div id="recommended-item-carousel" class="carousel slide" data-ride="carousel">
             <div class="carousel-inner">
-              <div class="item active">
-                <div class="col-sm-4">
-                  <div class="product-image-wrapper">
-                    <div class="single-products">
-                      <div class="productinfo text-center">
-                        <img src="images/home/recommend1.jpg" alt="" />
-                        <h2>$56</h2>
-                        <p>Easy Polo Black Edition</p>
-                        <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add
-                          to cart</button>
-                      </div>
+              <?php
+              foreach ($product_related as $key => $pro) {
+                ?>
+                <div class="item active">
+                  <div class="col-sm-4">
+                    <div class="product-image-wrapper">
+                      <form action="<?php echo base_url('add-to-cart') ?>" method="POST">
+                        <div class="single-products">
+                          <div class="productinfo text-center">
+                            <input type="hidden" value="<?php echo $pro->id ?>" name="product_id">
+                            <input type="hidden" value="1" name="quantity">
+                            <div
+                              style="width: 200px;height: 200px;object-fit: cover;margin: 0px 0px 20px 27px;padding-top: 15px;">
+                              <img src="<?php echo base_url('uploads/product/' . $pro->image) ?>"
+                                alt="<?php echo $pro->title ?>" />
+                            </div>
+                            <h2><?php echo number_format($pro->price, 0, ',', '.') ?>VND</h2>
+                            <p><?php echo $pro->title ?></p>
+                            <a href="<?php echo base_url('san-pham/' . $pro->id) ?>"
+                              class="btn btn-default add-to-cart"><i class="fa fa-eye"></i>Details</a>
+                          </div>
+                        </div>
+                      </form>
                     </div>
                   </div>
                 </div>
-                <div class="col-sm-4">
-                  <div class="product-image-wrapper">
-                    <div class="single-products">
-                      <div class="productinfo text-center">
-                        <img src="images/home/recommend2.jpg" alt="" />
-                        <h2>$56</h2>
-                        <p>Easy Polo Black Edition</p>
-                        <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add
-                          to cart</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-sm-4">
-                  <div class="product-image-wrapper">
-                    <div class="single-products">
-                      <div class="productinfo text-center">
-                        <img src="images/home/recommend3.jpg" alt="" />
-                        <h2>$56</h2>
-                        <p>Easy Polo Black Edition</p>
-                        <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add
-                          to cart</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="item">
-                <div class="col-sm-4">
-                  <div class="product-image-wrapper">
-                    <div class="single-products">
-                      <div class="productinfo text-center">
-                        <img src="images/home/recommend1.jpg" alt="" />
-                        <h2>$56</h2>
-                        <p>Easy Polo Black Edition</p>
-                        <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add
-                          to cart</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-sm-4">
-                  <div class="product-image-wrapper">
-                    <div class="single-products">
-                      <div class="productinfo text-center">
-                        <img src="images/home/recommend2.jpg" alt="" />
-                        <h2>$56</h2>
-                        <p>Easy Polo Black Edition</p>
-                        <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add
-                          to cart</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-sm-4">
-                  <div class="product-image-wrapper">
-                    <div class="single-products">
-                      <div class="productinfo text-center">
-                        <img src="images/home/recommend3.jpg" alt="" />
-                        <h2>$56</h2>
-                        <p>Easy Polo Black Edition</p>
-                        <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add
-                          to cart</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <?php } ?>
+              <a class="left recommended-item-control" href="#recommended-item-carousel" data-slide="prev">
+                <i class="fa fa-angle-left"></i>
+              </a>
+              <a class="right recommended-item-control" href="#recommended-item-carousel" data-slide="next">
+                <i class="fa fa-angle-right"></i>
+              </a>
             </div>
-            <a class="left recommended-item-control" href="#recommended-item-carousel" data-slide="prev">
-              <i class="fa fa-angle-left"></i>
-            </a>
-            <a class="right recommended-item-control" href="#recommended-item-carousel" data-slide="next">
-              <i class="fa fa-angle-right"></i>
-            </a>
-          </div>
-        </div><!--/recommended_items-->
+          </div><!--/recommended_items-->
 
+        </div>
       </div>
     </div>
-  </div>
 </section>

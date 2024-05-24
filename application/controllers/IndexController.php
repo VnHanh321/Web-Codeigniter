@@ -9,13 +9,46 @@ class IndexController extends CI_Controller
 		$this->load->model('IndexModel');//load lấy dữ liệu csdl
 
 		$this->load->library("cart");//load library cart
+		$this->load->library("pagination");//load library pagination
+		$this->load->library('email');//load library
 
 		$this->data['category'] = $this->IndexModel->getCategoryHome();
 		$this->data['brand'] = $this->IndexModel->getBrandHome();
 	}
 	public function index()
 	{
-		$this->data['allproduct'] = $this->IndexModel->getAllproduct();
+		// custom config link
+		$config = array();
+		$config["base_url"] = base_url() . '/pagination/index';
+		$config['total_rows'] = ceil($this->IndexModel->countAllProduct()); //đếm tất cả sản phẩm //8 //hàm ceil làm tròn phân trang
+		$config["per_page"] = 3; //từng trang 3 sản phẩn
+		$config["uri_segment"] = 3; //lấy số trang hiện tại
+		$config['use_page_numbers'] = TRUE; //trang có số
+		$config['full_tag_open'] = '<ul class="pagination">';
+		$config['full_tag_close'] = '</ul>';
+		$config['first_link'] = 'First';
+		$config['first_tag_open'] = '<li>';
+		$config['first_tag_close'] = '</li>';
+		$config['last_link'] = 'Last';
+		$config['last_tag_open'] = '<li>';
+		$config['last_tag_close'] = '</li>';
+		$config['cur_tag_open'] = '<li class="active"><a>';
+		$config['cur_tag_close'] = '</a></li>';
+		$config['num_tag_open'] = '<li>';
+		$config['num_tag_close'] = '</li>';
+		$config['next_tag_open'] = '<li>';
+		$config['next_tag_close'] = '</li>';
+		$config['prev_tag_open'] = '<li>';
+		$config['prev_tag_close'] = '</li>';
+		//end custom config link
+		$this->pagination->initialize($config); //tự động tạo trang
+		$this->page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0; //current page active
+		$this->data["links"] = $this->pagination->create_links(); //tự động tạo links phân trang dựa vào trang hiện tại
+		$this->data['allproduct_pagination'] = $this->IndexModel->getIndexPagination($config["per_page"], $this->page);
+		// pagination
+
+		// $this->data['allproduct'] = $this->IndexModel->getAllproduct();
+
 		$this->load->view('pages/template/header', $this->data);//load giao diện
 		$this->load->view('pages/template/slider');//load giao diện
 		$this->load->view('pages/home', $this->data);//load giao diện
@@ -28,8 +61,46 @@ class IndexController extends CI_Controller
 		$this->load->view('pages/login');
 		$this->load->view('pages/template/footer');
 	}
+	public function notfound()
+	{
+		$this->load->view('pages/template/header', $this->data);
+		// $this->load->view('pages/template/slider');
+		$this->load->view('pages/404notfound');
+		$this->load->view('pages/template/footer');
+	}
+
 	public function category($id)
 	{
+		//custom config link
+		$config = array();
+		$config["base_url"] = base_url() . '/danh-muc' . '/' . $id;
+		$config['total_rows'] = ceil($this->IndexModel->countAllProductByCate($id)); //đếm tất cả sản phẩm //8 //hàm ceil làm tròn phân trang
+		$config["per_page"] = 2; //từng trang 3 sản phẩn
+		$config["uri_segment"] = 3; //lấy số trang hiện tại
+		$config['use_page_numbers'] = TRUE; //trang có số
+		$config['full_tag_open'] = '<ul class="pagination">';
+		$config['full_tag_close'] = '</ul>';
+		$config['first_link'] = 'First';
+		$config['first_tag_open'] = '<li>';
+		$config['first_tag_close'] = '</li>';
+		$config['last_link'] = 'Last';
+		$config['last_tag_open'] = '<li>';
+		$config['last_tag_close'] = '</li>';
+		$config['cur_tag_open'] = '<li class="active"><a>';
+		$config['cur_tag_close'] = '</a></li>';
+		$config['num_tag_open'] = '<li>';
+		$config['num_tag_close'] = '</li>';
+		$config['next_tag_open'] = '<li>';
+		$config['next_tag_close'] = '</li>';
+		$config['prev_tag_open'] = '<li>';
+		$config['prev_tag_close'] = '</li>';
+		//end custom config link
+		$this->pagination->initialize($config); //tự động tạo trang
+		$this->page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0; //current page active
+		$this->data["links"] = $this->pagination->create_links(); //tự động tạo links phân trang dựa vào trang hiện tại
+		$this->data['allproductbycate_pagination'] = $this->IndexModel->getCatePagination($id, $config["per_page"], $this->page);
+		//pagination
+
 		$this->data['category_product'] = $this->IndexModel->getCategoryProduct($id);
 		$this->data['title'] = $this->IndexModel->getCategoryTitle($id);
 		$this->config->config['pageTitle'] = $this->data['title'];
@@ -70,13 +141,19 @@ class IndexController extends CI_Controller
 		$this->data['product_details'] = $this->IndexModel->getProductDetails($product_id);
 		//dat hang
 		foreach ($this->data['product_details'] as $key => $pro) {
-			$cart = array(
-				'id' => $pro->id,
-				'qty' => $quantity,
-				'price' => $pro->price,
-				'name' => $pro->title,
-				'options' => array('image' => $pro->image)
-			);
+			if ($pro->quantity >= $quantity) {
+				$cart = array(
+					'id' => $pro->id,
+					'qty' => $quantity,
+					'price' => $pro->price,
+					'name' => $pro->title,
+					'options' => array('image' => $pro->image, 'in_stock' => $pro->quantity)
+				);
+			} else {
+				$this->session->set_flashdata('error', 'Exceeding the quantity in stock, please reset the order');
+				redirect($_SERVER['HTTP_REFERER']);
+			}
+			;
 		}
 		$this->cart->insert($cart);
 		redirect(base_url() . 'gio-hang', 'refresh');
@@ -84,17 +161,24 @@ class IndexController extends CI_Controller
 	public function update_cart_item()
 	{
 		$rowid = $this->input->post('rowid');
-		echo $quantity = $this->input->post('quantity');
+		$quantity = $this->input->post('quantity');
+
 		foreach ($this->cart->contents() as $items) {
 			if ($rowid == $items['rowid']) {
-				$cart = array(
-					'rowid' => $rowid,
-					'qty' => $quantity,
-				);
+				if ($quantity <= $items['options']['in_stock']) {
+					$cart = array(
+						'rowid' => $rowid,
+						'qty' => $quantity,
+					);
+				} elseif ($quantity > $items['options']['in_stock']) {
+					$cart = array(
+						'rowid' => $rowid,
+						'qty' => $items['options']['in_stock'],
+					);
+				}
 			}
 		}
 		$this->cart->update($cart);
-		// redirect(base_url() . 'gio-hang', 'refresh');
 		redirect($_SERVER['HTTP_REFERER']);
 	}
 
@@ -155,6 +239,8 @@ class IndexController extends CI_Controller
 			$name = $this->input->post('name');
 			$address = $this->input->post('address');
 			$phone = $this->input->post('phone');
+			$token = rand(0000, 9999);
+			$date_created = Carbon\Carbon::now('Asia/Ho_Chi_Minh');
 
 			$data = array(
 				'email' => $email,
@@ -162,6 +248,8 @@ class IndexController extends CI_Controller
 				'name' => $name,
 				'address' => $address,
 				'phone' => $phone,
+				'token' => $token,
+				'date_created' => $date_created,
 			);
 
 			$this->load->model('LoginModel');
@@ -173,6 +261,15 @@ class IndexController extends CI_Controller
 				);
 				$this->session->set_userdata('LoggedInCustomer', $session_array);
 				$this->session->set_flashdata('success', 'login successfuly');
+				//send mail
+				$url_confirm = base_url() . '?token=' . $token . '&email=' . $email;
+
+				$title = "Registration Successful!";
+				$message = "Click here to activate your account: " . $url_confirm;
+				$to_email = $email;
+
+				$this->send_mail($to_email, $title, $message);
+
 				redirect(base_url('/checkout'));
 			} else {
 				$this->session->set_flashdata('error', 'login fasle');
@@ -182,15 +279,19 @@ class IndexController extends CI_Controller
 			$this->login();
 		}
 	}
+	public function authentication()
+	{
+		echo 'ss';
+	}
 	public function checkout()
 	{
 		if ($this->session->userdata('LoggedInCustomer') && $this->cart->contents()) {
 			$this->load->view('pages/template/header', $this->data);
-			// $this->load->view('pages/template/slider');
 			$this->load->view('pages/checkout');
 			$this->load->view('pages/template/footer');
 		} else {
-			redirect(base_url() . 'gio-hang');
+			$this->session->set_flashdata('success', 'Please log in to order!!!');
+			redirect(base_url() . 'dang-nhap');
 		}
 	}
 	public function confirm_checkout()
@@ -239,6 +340,11 @@ class IndexController extends CI_Controller
 
 				$this->session->set_flashdata('success', 'Order successfuly');
 				$this->cart->destroy();
+				//send mail order success
+				$to_email = $email;
+				$title = "Order success";
+				$message = "Will contact you soon";
+				$this->send_mail($to_email, $title, $message);
 				redirect(base_url('/thanks'));
 			} else {
 				$this->session->set_flashdata('error', 'Order fasle');
@@ -259,13 +365,58 @@ class IndexController extends CI_Controller
 		if (isset($_GET['keyword']) && $_GET['keyword'] != '') {
 			$keyword = $_GET['keyword'];
 		}
+
 		$this->data['product'] = $this->IndexModel->getProductByKeyword($keyword);
-		$this->data['title'] = 'Keyword: ' . $keyword;
-		$this->config->config['pageTitle'] = $keyword;
+		$this->data['title'] = $keyword;
+		$this->config->config["pageTitle"] = 'Keyword: ' . $keyword;
 
 		$this->load->view('pages/template/header', $this->data);
-		// $this->load->view('pages/template/slider');
 		$this->load->view('pages/search', $this->data);
 		$this->load->view('pages/template/footer');
+	}
+	public function send_mail($to_email, $title, $message)
+	{
+		$config = array(
+			'protocol' => 'smtp',
+			'smtp_host' => 'ssl://smtp.gmail.com',
+			'smtp_user' => 'nguyenhanh030201@gmail.com',
+			'smtp_pass' => 'jtfqtezpifusqvjw',
+			'smtp_port' => 465,
+			'charset' => 'utf-8'
+		);
+		try {
+			$this->email->initialize($config);
+			$this->email->set_newline("\r\n");
+
+			$this->email->from('nguyenhanh030201@gmail.com', 'Order success');
+			$this->email->to($to_email);
+
+			$this->email->subject($title);
+			$this->email->message($message);
+
+			$this->email->send();
+			echo 'Email sent successfully!';
+		} catch (Exception $e) {
+			echo 'Error sending email: ' . $e->getMessage();
+		}
+	}
+	public function contact()
+	{
+		$this->load->view('pages/template/header', $this->data);
+		$this->load->view('pages/template/slider');
+		$this->load->view('pages/contact');
+		$this->load->view('pages/template/footer');
+	}
+	public function send_contact()
+	{
+		$data = [
+			'name' => $this->input->post('name'),
+			'phone' => $this->input->post('phone'),
+			'address' => $this->input->post('address'),
+			'note' => $this->input->post('note')
+		];
+		$this->IndexModel->insertContact($data);
+		$this->session->set_flashdata('success', 'Send Success');
+		redirect(base_url('contact'));
 	}
 }

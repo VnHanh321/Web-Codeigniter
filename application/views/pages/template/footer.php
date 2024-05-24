@@ -165,6 +165,27 @@
 <script src="<?php echo base_url('frontend/js/price-range.js') ?>"></script>
 <script src="<?php echo base_url('frontend/js/jquery.prettyPhoto.js') ?>"></script>
 <script src="<?php echo base_url('frontend/js/main.js') ?>"></script>
+
+<!-- <script>
+  $(document).ready(function () {
+    var active = location.search; //?kytu=asc
+    $('#select-filter option[value="' + active + '"]').attr('selected', 'selected');
+  })
+
+  $('.select-filter').change(function () {
+
+    var value = $(this).find(':selected').val();
+
+    // alert(value);
+    if (value != 0) {
+      var url = value;
+      // alert(url);
+      window.location.replace(url);
+    } else {
+      alert('Hãy lọc sản phẩm');
+    }
+  })
+</script> -->
 </body>
 
 </html>
