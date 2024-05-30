@@ -16,7 +16,7 @@
         if ($this->session->flashdata('success')) {
           echo '<div class="alert alert-success">' . $this->session->flashdata('success') . '</div>';
         } elseif ($this->session->flashdata('error')) {
-          echo '<div class="alert alert-dsanger">' . $this->session->flashdata('error') . '</div>';
+          echo '<div class="alert alert-danger">' . $this->session->flashdata('error') . '</div>';
         }
         ?>
         <form action="<?php echo base_url('send-contact') ?>" method="POST">

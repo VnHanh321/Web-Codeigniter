@@ -17,13 +17,24 @@ class IndexController extends CI_Controller
 	}
 	public function index()
 	{
-		// custom config link
 		$config = array();
+
+		// Base URL for pagination links (adjust as needed)
 		$config["base_url"] = base_url() . '/pagination/index';
-		$config['total_rows'] = ceil($this->IndexModel->countAllProduct()); //đếm tất cả sản phẩm //8 //hàm ceil làm tròn phân trang
-		$config["per_page"] = 3; //từng trang 3 sản phẩn
-		$config["uri_segment"] = 3; //lấy số trang hiện tại
-		$config['use_page_numbers'] = TRUE; //trang có số
+
+		// Total number of products (replace with your actual logic)
+		$config['total_rows'] = ceil($this->IndexModel->countAllProduct()); // Adjust as needed
+
+		// Products per page (customize the number as needed)
+		$config["per_page"] = 6;
+
+		// Segment for pagination (adjust if your URL structure differs)
+		$config["uri_segment"] = 3;  // Likely '3' for pagination/index/{page}
+
+		// Use page numbers for links
+		$config['use_page_numbers'] = TRUE;
+
+		// Customize pagination appearance
 		$config['full_tag_open'] = '<ul class="pagination">';
 		$config['full_tag_close'] = '</ul>';
 		$config['first_link'] = 'First';
@@ -41,14 +52,21 @@ class IndexController extends CI_Controller
 		$config['prev_tag_open'] = '<li>';
 		$config['prev_tag_close'] = '</li>';
 		//end custom config link
-		$this->pagination->initialize($config); //tự động tạo trang
-		$this->page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0; //current page active
-		$this->data["links"] = $this->pagination->create_links(); //tự động tạo links phân trang dựa vào trang hiện tại
+
+		// Initialize pagination with custom configuration
+		$this->pagination->initialize($config);
+
+		// Determine current page (adjust if your URL structure differs)
+		$this->page = ($this->uri->segment(6)) ? $this->uri->segment(6) : 0;
+
+		// Create pagination links (automatic generation)
+		$this->data["links"] = $this->pagination->create_links();
+
+		// Retrieve paginated product data
 		$this->data['allproduct_pagination'] = $this->IndexModel->getIndexPagination($config["per_page"], $this->page);
-		// pagination
+
 
 		// $this->data['allproduct'] = $this->IndexModel->getAllproduct();
-
 		$this->load->view('pages/template/header', $this->data);//load giao diện
 		$this->load->view('pages/template/slider');//load giao diện
 		$this->load->view('pages/home', $this->data);//load giao diện
@@ -121,7 +139,10 @@ class IndexController extends CI_Controller
 	public function product($id)
 	{
 		$this->data['product_details'] = $this->IndexModel->getProductDetails($id);
+		$this->data['list_comments'] = $this->IndexModel->getListComments($id);
+
 		$this->data['title'] = $this->IndexModel->getProductTitle($id);
+
 		$this->config->config['pageTitle'] = $this->data['title'];
 		$this->load->view('pages/template/header', $this->data);
 		$this->load->view('pages/product_details', $this->data);
@@ -130,16 +151,62 @@ class IndexController extends CI_Controller
 	public function cart()
 	{
 		$this->load->view('pages/template/header', $this->data);
-		// $this->load->view('pages/template/slider');
 		$this->load->view('pages/cart');
 		$this->load->view('pages/template/footer');
 	}
+	// public function add_to_cart()
+	// {
+	// 	$product_id = $this->input->post('product_id');
+	// 	$quantity = $this->input->post('quantity');
+	// 	$this->data['product_details'] = $this->IndexModel->getProductDetails($product_id);
+
+	// 	//dat hang
+	// 	if ($this->cart->contents() > 0) {
+	// 		foreach ($this->cart->contents() as $items) {
+	// 			if ($items['id'] == $product_id) {
+	// 				$this->session->set_flashdata('success', 'Products already in the cart');
+	// 				redirect(base_url() . 'gio-hang', 'refresh');
+	// 			} else {
+	// 				foreach ($this->data['product_details'] as $key => $pro) {
+	// 					if ($pro->quantity >= $quantity) {
+	// 						$cart = array(
+	// 							'id' => $pro->id,
+	// 							'qty' => $quantity,
+	// 							'price' => $pro->price,
+	// 							'name' => $pro->title,
+	// 							'options' => array('image' => $pro->image, 'in_stock' => $pro->quantity)
+	// 						);
+	// 					} else {
+	// 						$this->session->set_flashdata('error', 'Exceeding the quantity in stock, please reset the order');
+	// 						redirect($_SERVER['HTTP_REFERER']);
+	// 					}
+	// 				}
+	// 				$this->cart->insert($cart);
+	// 			}
+	// 		}
+	// 		$this->cart->insert($cart);
+	// 		$this->session->set_flashdata('success', 'Added to cart successfully');
+	// 		redirect(base_url() . 'gio-hang', 'refresh');
+	// 	}
+	// }
 	public function add_to_cart()
 	{
 		$product_id = $this->input->post('product_id');
 		$quantity = $this->input->post('quantity');
+
 		$this->data['product_details'] = $this->IndexModel->getProductDetails($product_id);
-		//dat hang
+
+		// Check if cart has items
+		if ($this->cart->contents() > 0) {
+			foreach ($this->cart->contents() as $items) {
+				if ($items['id'] == $product_id) {
+					$this->session->set_flashdata('success', 'Products already in the cart');
+					redirect(base_url() . 'gio-hang', 'refresh');
+				}
+			}
+		}
+
+		// Check product quantity in stock
 		foreach ($this->data['product_details'] as $key => $pro) {
 			if ($pro->quantity >= $quantity) {
 				$cart = array(
@@ -149,14 +216,15 @@ class IndexController extends CI_Controller
 					'name' => $pro->title,
 					'options' => array('image' => $pro->image, 'in_stock' => $pro->quantity)
 				);
+				$this->cart->insert($cart); // Insert only if quantity is available
+				$this->session->set_flashdata('success', 'Thêm vào giỏ hàng thành công');
+				redirect(base_url() . 'gio-hang', 'refresh');
+				break; // Exit loop after successful insertion
 			} else {
-				$this->session->set_flashdata('error', 'Exceeding the quantity in stock, please reset the order');
+				$this->session->set_flashdata('error', 'Số lượng vượt quá hàng tồn kho, vui lòng đặt lại');
 				redirect($_SERVER['HTTP_REFERER']);
 			}
-			;
 		}
-		$this->cart->insert($cart);
-		redirect(base_url() . 'gio-hang', 'refresh');
 	}
 	public function update_cart_item()
 	{
@@ -209,7 +277,7 @@ class IndexController extends CI_Controller
 					'email' => $result[0]->email,
 				);
 				$this->session->set_userdata('LoggedInCustomer', $session_array);
-				$this->session->set_flashdata('success', 'login successfuly');
+				$this->session->set_flashdata('success', 'Login successfuly');
 				redirect(base_url('/checkout'));
 			} else {
 				$this->session->set_flashdata('error', 'login fasle');
@@ -222,7 +290,7 @@ class IndexController extends CI_Controller
 	public function logout_customer()
 	{
 		$this->session->unset_userdata('LoggedInCustomer');
-		$this->session->set_flashdata('success', 'logout successfuly');
+		$this->session->set_flashdata('success', 'Signed out successfully');
 		redirect(base_url('/dang-nhap'));
 	}
 	public function signup_customer()
@@ -272,17 +340,14 @@ class IndexController extends CI_Controller
 
 				redirect(base_url('/checkout'));
 			} else {
-				$this->session->set_flashdata('error', 'login fasle');
+				$this->session->set_flashdata('error', 'Login failed!!!');
 				redirect(base_url('/dang-nhap'));
 			}
 		} else {
 			$this->login();
 		}
 	}
-	public function authentication()
-	{
-		echo 'ss';
-	}
+
 	public function checkout()
 	{
 		if ($this->session->userdata('LoggedInCustomer') && $this->cart->contents()) {
@@ -290,10 +355,11 @@ class IndexController extends CI_Controller
 			$this->load->view('pages/checkout');
 			$this->load->view('pages/template/footer');
 		} else {
-			$this->session->set_flashdata('success', 'Please log in to order!!!');
-			redirect(base_url() . 'dang-nhap');
+			$this->session->set_flashdata('error', 'Please log in to place an order');
+			redirect(base_url() . 'gio-hang');
 		}
 	}
+
 	public function confirm_checkout()
 	{
 		$this->form_validation->set_rules('email', 'Email', 'required', ['required' => 'You must provide a %s.']);
@@ -418,5 +484,37 @@ class IndexController extends CI_Controller
 		$this->IndexModel->insertContact($data);
 		$this->session->set_flashdata('success', 'Send Success');
 		redirect(base_url('contact'));
+	}
+	public function send_comment()
+	{
+		$this->load->library('form_validation'); // Load validation library
+
+		// Set validation rules (optional but recommended)
+		$this->form_validation->set_rules('name_comment', 'Name', 'required|trim');
+		$this->form_validation->set_rules('email_comment', 'Email', 'required|trim|valid_email');
+		$this->form_validation->set_rules('comment', 'Comment', 'required|trim');
+
+		if ($this->form_validation->run() === TRUE) {
+			$data = [
+				'name' => $this->input->post('name_comment'),
+				'email' => $this->input->post('email_comment'),
+				'comment' => $this->input->post('comment'),
+				'product_id' => $this->input->post('product_id_comment'),
+				'date' => Carbon\Carbon::now('Asia/Ho_Chi_Minh'),
+				'star' => $this->input->post('star_rating_value'),
+				'status' => 0, // Assuming comments require approval
+			];
+
+			$result = $this->IndexModel->insertComment($data);
+
+			if ($result) {
+				echo 'success';
+				$this->session->set_flashdata('success', "Comment submitted successfully! It will be reviewed before being displayed.");
+			} else {
+				echo 'not'; // Provide more specific error message if possible
+			}
+		} else {
+			echo validation_errors(); // Display validation errors on failure
+		}
 	}
 }

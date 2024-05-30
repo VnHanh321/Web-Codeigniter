@@ -1,5 +1,12 @@
 <section id="cart_items">
   <div class="container">
+    <?php
+    if ($this->session->flashdata('success')) {
+      echo '<div class="alert alert-success">' . $this->session->flashdata('success') . '</div>';
+    } elseif ($this->session->flashdata('error')) {
+      echo '<div class="alert alert-danger">' . $this->session->flashdata('error') . '</div>';
+    }
+    ?>
     <div class="breadcrumbs">
       <ol class="breadcrumb">
         <li><a href="#">Home</a></li>
@@ -52,14 +59,13 @@
                         ?>
                         <input class="" type="number" min="1" name="quantity"
                           value="<?php echo $items['options']['in_stock'] ?>" autocomplete="off" size="1">
+
                         <?php
                       } else {
                         ?>
                         <input class="" type="number" min="1" name="quantity" value="<?php echo $items['qty'] ?>"
                           autocomplete="off" size="1">
-                        <?php
-                      } ?>
-
+                      <?php } ?>
                       <input type="submit" value="Update" name="capnhat" class="btn btn-primary  btn-rounded">
                     </div>
                   </form>

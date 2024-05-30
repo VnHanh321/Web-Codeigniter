@@ -1,4 +1,55 @@
 <section>
+  <style>
+    .clearfix {
+      clear: both;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    a {
+      color: tomato;
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: #2196f3;
+    }
+
+
+    /* Rating Star Widgets Style */
+    .rating-stars ul {
+      list-style-type: none;
+      padding: 0;
+
+      -moz-user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .rating-stars ul>li.star {
+      display: inline-block;
+
+    }
+
+    /* Idle State of the stars */
+    .rating-stars ul>li.star>i.fa {
+      font-size: 2.5em;
+      /* Change the size of the stars */
+      color: #ccc;
+      /* Color on idle state */
+    }
+
+    /* Hover state of the stars */
+    .rating-stars ul>li.star.hover>i.fa {
+      color: #FFCC36;
+    }
+
+    /* Selected state of the stars */
+    .rating-stars ul>li.star.selected>i.fa {
+      color: #FF912C;
+    }
+  </style>
   <div class="container">
     <div class="row">
       <div class="col-sm-3">
@@ -61,7 +112,6 @@
                   <img src="images/product-details/new.jpg" class="newarrival" alt="" />
                   <h2><?php echo $pro->title ?></h2>
                   <input type="hidden" value="<?php echo $pro->id ?>" name="product_id">
-                  <!-- <img src="images/product-details/rating.png" alt="" /> -->
                   <span>
                     <span><?php echo number_format($pro->price, 0, ',', '.') ?> VND</span><br>
                     <label>Quantity: <?php echo $pro->quantity ?></label>
@@ -259,28 +309,49 @@
 
             <div class="tab-pane fade active in" id="reviews">
               <div class="col-sm-12">
-                <ul>
-                  <li><a href=""><i class="fa fa-user"></i>EUGEN</a></li>
-                  <li><a href=""><i class="fa fa-clock-o"></i>12:41 PM</a></li>
-                  <li><a href=""><i class="fa fa-calendar-o"></i>31 DEC 2014</a></li>
-                </ul>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore
-                  et dolore magna aliqua.Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                  aliquip ex ea commodo consequat.Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-                  dolore eu fugiat nulla pariatur.</p>
-                <p><b>Write Your Review</b></p>
-
-                <form action="#">
-                  <span>
-                    <input type="text" placeholder="Your Name" />
-                    <input type="email" placeholder="Email Address" />
-                  </span>
-                  <textarea name=""></textarea>
-                  <b>Rating: </b> <img src="images/product-details/rating.png" alt="" />
-                  <button type="button" class="btn btn-default pull-right">
-                    Submit
-                  </button>
-                </form>
+                <?php foreach ($list_comments as $key => $comments) {
+                  ?>
+                  <ul>
+                    <li><a href="#"><i class="fa fa-user"></i><?php echo $comments->name ?></a></li>
+                    <li><a href="#"><i class="fa fa-clock-o"></i><?php echo $comments->date ?></a></li>
+                    <li><a href="#"><i class="fa fa-star"></i><?php echo $comments->star ?></a></li>
+                  </ul>
+                  <p><?php echo $comments->comment ?></p>
+                <?php } ?>
+                <p><b>Write Your Review and Rating</b></p>
+                <section class='rating-widget'>
+                  <!-- Rating Stars Box -->
+                  <div class='rating-stars text-center'>
+                    <input type="hidden" class="star_rating_value">
+                    <ul id='stars'>
+                      <li class='star' title='Poor' data-value='1'>
+                        <i class='fa fa-star fa-fw'></i>
+                      </li>
+                      <li class='star' title='Fair' data-value='2'>
+                        <i class='fa fa-star fa-fw'></i>
+                      </li>
+                      <li class='star' title='Good' data-value='3'>
+                        <i class='fa fa-star fa-fw'></i>
+                      </li>
+                      <li class='star' title='Excellent' data-value='4'>
+                        <i class='fa fa-star fa-fw'></i>
+                      </li>
+                      <li class='star' title='WOW!!!' data-value='5'>
+                        <i class='fa fa-star fa-fw'></i>
+                      </li>
+                    </ul>
+                  </div>
+                  <form action="#">
+                    <span>
+                      <input type="hidden" class="product_id_comment" value="<?php echo $pro->id ?>" />
+                      <input type="text" class="name_comment" placeholder="Your Name" />
+                      <input type="email" class="email_comment" placeholder="Email Address" />
+                    </span>
+                    <textarea name="" class="comment"></textarea>
+                    <button type="button" class="btn btn-default pull-right write-comment">
+                      Submit
+                    </button>
+                  </form>
               </div>
             </div>
 

@@ -18,7 +18,7 @@
         <!-- enctype="multipart/form-data": chia nho anh upload server -->
         <div class=" mb-3">
           <label for="exampleInputEmail1" class="form-label">Title</label>
-          <input type="text" name="title" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+          <input type="text" name="title" class="form-control" id="title" onkeyup="ChangeToSlug();">
           <?php echo '<span class="text text-danger">' . form_error('title') . '</span>'; ?>
         </div>
         <div class=" mb-3">
@@ -33,7 +33,7 @@
         </div>
         <div class=" mb-3">
           <label for="exampleInputEmail1" class="form-label">Slug</label>
-          <input type="text" name="slug" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+          <input type="text" name="slug" class="form-control" id="slug">
           <?php echo '<span class="text text-danger">' . form_error('slug') . '</span>'; ?>
         </div>
         <div class="mb-3">

@@ -119,4 +119,13 @@ class IndexModel extends CI_Model
       ->get();
     return $query->result();
   }
+  public function insertComment($data)
+  {
+    return $this->db->insert('comments', $data);
+  }
+  public function getListComments($product_id)
+  {
+    $query = $this->db->get_where('comments', ['product_id' => $product_id, 'status' => 1]);
+    return $query->result();
+  }
 }

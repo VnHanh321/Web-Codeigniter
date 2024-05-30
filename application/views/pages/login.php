@@ -8,13 +8,13 @@
           if ($this->session->flashdata('success')) {
             echo '<div class="alert alert-success">' . $this->session->flashdata('success') . '</div>';
           } elseif ($this->session->flashdata('error')) {
-            echo '<div class="alert alert-dsanger">' . $this->session->flashdata('error') . '</div>';
+            echo '<div class="alert alert-danger">' . $this->session->flashdata('error') . '</div>';
           }
           ?>
           <form action="<?php echo base_url('login-customer'); ?>" method="POST">
             <input type="email" name="email" placeholder="Email Address" />
             <?php echo form_error('email'); ?>
-            <input type="password" name="password" placeholder="Password Address" />
+            <input type="password" name="password" placeholder="Password" />
             <?php echo form_error('password'); ?>
             <button type="submit" class="btn btn-default">Login</button>
           </form>

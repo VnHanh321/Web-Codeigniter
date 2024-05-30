@@ -21,8 +21,10 @@ $route['delete-all-cart']['GET'] = 'IndexController/delete_all_cart';
 $route['delete-item-cart/(:any)']['GET'] = 'IndexController/delete_item_cart/$1';
 //Checkout
 $route['checkout']['GET'] = 'IndexController/checkout';
-$route['confirm-checkout']['POST'] = 'IndexController/confirm_checkout';
 $route['thanks']['GET'] = 'IndexController/thanks';
+$route['confirm-checkout']['POST'] = 'IndexController/confirm_checkout';
+$route['online-checkout']['POST'] = 'PayController/online_checkout';
+
 //login-customer
 $route['dang-xuat']['GET'] = 'IndexController/logout_customer';
 $route['login-customer']['POST'] = 'IndexController/login_customer';
@@ -68,3 +70,5 @@ $route['pagination/index'] = 'IndexController/index';
 $route['danh-muc/(:any)/(:any)']['GET'] = 'IndexController/category/$1/$2';
 //mail
 $route['test-mail'] = 'IndexController/send_mail';
+//comment
+$route['comment/send']['POST'] = 'IndexController/send_comment';

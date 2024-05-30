@@ -31,10 +31,10 @@ defined('BASEPATH') or exit('No direct script access allowed');
 <body>
   <div class="header">
     <div class="container">
-      <div class="row">
+      <div class="row" style="margin-top: 10px;">
         <div class="col-sm-4">
           <div class="logo pull-left">
-            <a href="index.html"><img src="images/home/logo.png" alt="" /></a>
+            <a href="<?php echo base_url() ?>"><img src="images/home/logo.png" alt="" /></a>
           </div>
           <div class="btn-group pull-right">
           </div>
@@ -48,7 +48,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 <li><a href="#"><i class="fa fa-user"></i> Account</a>:
                   <?php echo $this->session->userdata('LoggedInCustomer')['username'] ?>
                 </li>
-                <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
                 <li><a href="<?php echo base_url('checkout') ?>"><i class="fa fa-crosshairs"></i> Checkout</a></li>
                 <li><a href="<?php echo base_url('dang-xuat') ?>"><i class="fa fa-lock"></i> Logout</a></li>
                 <?php
@@ -92,12 +91,12 @@ defined('BASEPATH') or exit('No direct script access allowed');
                   ?>
                 </ul>
               </li>
-              <li class="dropdown"><a href="#">Blog<i class="fa fa-angle-down"></i></a>
+              <!-- <li class="dropdown"><a href="#">Blog<i class="fa fa-angle-down"></i></a>
                 <ul role="menu" class="sub-menu">
                   <li><a href="blog.html">Blog List</a></li>
                   <li><a href="blog-single.html">Blog Single</a></li>
                 </ul>
-              </li>
+              </li> -->
               <li><a href="<?php echo base_url('contact'); ?>">Contact</a></li>
             </ul>
           </div>
